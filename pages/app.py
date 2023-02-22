@@ -1,6 +1,6 @@
 from playwright.sync_api import Playwright
-from web_tests.pages.stays_page import StaysPage
-from web_tests.settings.settings import *
+from pages.stays_page import StaysPage
+from settings.settings import *
 
 
 class App:
