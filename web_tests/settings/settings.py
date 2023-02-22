@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-headless_setting = False
+headless_setting = True
 base_url_settings = "https://www.booking.com"
 
 
@@ -15,4 +15,4 @@ def first_day_and_next_day_of_next_month():
         month += 1
     first_day_of_next_month = date(year, month, 1)
     next_day = first_day_of_next_month + timedelta(days=1)
-    return first_day_of_next_month.strftime("%Y-%d-%m"), next_day.strftime("%Y-%d-%m")
+    return first_day_of_next_month.strftime("%Y-%m-%d"), next_day.strftime("%Y-%m-%d")
