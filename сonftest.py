@@ -2,8 +2,8 @@ from pathlib import Path
 from pytest import fixture
 from playwright.sync_api import sync_playwright
 from slugify import slugify
-from pages.app import App
-from settings.settings import *
+from web_tests.pages.app import App
+from web_tests.settings.settings import *
 import pytest
 
 
