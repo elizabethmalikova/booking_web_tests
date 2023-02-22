@@ -33,19 +33,19 @@ def pytest_runtest_makereport(item, call):
         report.extra = extra
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def get_playwright():
     with sync_playwright() as p:
         yield p
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def app(get_playwright):
     app = App(get_playwright, base_url=base_url_settings)
     yield app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def app_without_auth(get_playwright, base_url=base_url_settings):
     app = App(get_playwright, base_url=base_url_settings, storage_state=None)
     yield app

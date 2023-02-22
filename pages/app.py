@@ -13,6 +13,9 @@ class App:
         self.page.goto(base_url)
         self.stays_page = StaysPage(self.page)
 
+    def save_state(self):
+        self.context.storage_state(path="state.json")
+
     def goto(self, endpoint: str, use_base_url=True):
         if use_base_url:
             self.page.goto(self.base_url + endpoint)
