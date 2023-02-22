@@ -1,5 +1,5 @@
 from playwright.sync_api import Playwright
-from web_tests.pages.main_page import MainPage
+from web_tests.pages.stays_page import StaysPage
 from web_tests.settings.settings import *
 
 
@@ -11,7 +11,7 @@ class App:
         self.page = self.context.new_page()
         self.base_url = base_url
         self.page.goto(base_url)
-        self.main_page = MainPage(self.page)
+        self.stays_page = StaysPage(self.page)
 
     def goto(self, endpoint: str, use_base_url=True):
         if use_base_url:
