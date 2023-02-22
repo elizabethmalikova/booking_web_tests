@@ -2,8 +2,8 @@ from pathlib import Path
 from pytest import fixture
 from playwright.sync_api import sync_playwright
 from slugify import slugify
-from pages.app import App
-from settings.settings import *
+from web_tests.pages.app import App
+from web_tests.settings.settings import *
 import pytest
 
 
@@ -34,19 +34,19 @@ def pytest_runtest_makereport(item, call):
         report.extra = extra
 
 
-@fixture(scope='function')
+@fixture(scope="session")
 def get_playwright():
     with sync_playwright() as p:
         yield p
 
 
-@fixture(scope='function')
+@fixture(scope="session")
 def app(get_playwright):
     app = App(get_playwright, base_url=base_url_settings)
     yield app
 
 
-@fixture(scope='function')
+@fixture(scope="session")
 def app_without_auth(get_playwright, base_url=base_url_settings):
     app = App(get_playwright, base_url=base_url_settings, storage_state=None)
     yield app

@@ -2,10 +2,11 @@ from playwright.sync_api import Page, expect, TimeoutError
 from web_tests.settings.settings import first_day_and_next_day_of_next_month
 
 
-where_input = "//input[@class='c-autocomplete__input sb-searchbox__input sb-destination__input']"
-calendar_button = "//div[@data-visible='accommodation,flights,rentalcars']"
+where_input = "//input[@placeholder='Where are you going?']"
+calendar_button = "//button[@type='button' and contains(text(), 'Сheck-out date')]"
 date_button = "//td[@data-bui-ref='calendar-date']"
 search_button = "//button[@type='submit']"
+sign_close_button = "//button[@aria-label='Dismiss sign in information.']"
 
 # accommodation
 accommodation_button = "//div[@data-component='search/group/group-with-modal']"
@@ -14,7 +15,7 @@ increase_adult_button = "//button[@aria-label='Increase number of Adults']"
 decrease_child_button = "//button[@aria-label='Decrease number of Children']"
 increase_child_button = "//button[@aria-label='Increase number of Children']"
 decrease_room_button = "//button[@aria-label='Decrease number of Rooms']"
-increase_room_button = "//button[@aria-label='Increase number of Rooms]"
+increase_room_button = "//button[@aria-label='Increase number of Rooms']"
 
 
 class StaysPage:
@@ -23,6 +24,11 @@ class StaysPage:
         self.page = page
 
     def find_stay(self, place, adults, children, rooms):
+        try:
+            self.page.locator(sign_close_button).click()
+        except TimeoutError:
+            expect(self.page.locator(where_input)).to_be_visible(timeout=5000)
+        self.page.locator(where_input).click()
         self.page.locator(where_input).fill(place)
         self.page.locator(calendar_button).click()
         data_start, data_end = first_day_and_next_day_of_next_month()
