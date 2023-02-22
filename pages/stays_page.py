@@ -1,12 +1,14 @@
-from playwright.sync_api import Page, expect, TimeoutError
-from web_tests.settings.settings import first_day_and_next_day_of_next_month
+from playwright.sync_api import Playwright, Page, expect, TimeoutError
+from settings.settings import format_date, base_url_settings
 
-
+# simple buttons
 where_input = "//input[@placeholder='Where are you going?']"
-calendar_button = "//button[@type='button' and contains(text(), 'Сheck-out date')]"
+calendar_button = "text=Check-out"
 date_button = "//td[@data-bui-ref='calendar-date']"
 search_button = "//button[@type='submit']"
 sign_close_button = "//button[@aria-label='Dismiss sign in information.']"
+work_checkbox = "//label[@for='sb_travel_purpose_checkbox']"
+next_month = "//div[@data-bui-ref='calendar-next']"
 
 # accommodation
 accommodation_button = "//div[@data-component='search/group/group-with-modal']"
@@ -17,23 +19,35 @@ increase_child_button = "//button[@aria-label='Increase number of Children']"
 decrease_room_button = "//button[@aria-label='Decrease number of Rooms']"
 increase_room_button = "//button[@aria-label='Increase number of Rooms']"
 
+result_of_searching = "//div[@data-capla-component='b-search-web-searchresults/HeaderDesktop']"
+
 
 class StaysPage:
 
     def __init__(self, page: Page):
         self.page = page
 
-    def find_stay(self, place, adults, children, rooms):
+    def find_stay(self, place='', adults=2, children=0, rooms=1, work='', start_date='', days=''):
+
+        # for registration modal
         try:
             self.page.locator(sign_close_button).click()
         except TimeoutError:
             expect(self.page.locator(where_input)).to_be_visible(timeout=5000)
-        self.page.locator(where_input).click()
+
+        # filling place
         self.page.locator(where_input).fill(place)
-        self.page.locator(calendar_button).click()
-        data_start, data_end = first_day_and_next_day_of_next_month()
+
+        # filling date
+        self.page.query_selector(calendar_button).click(force=True)
+        clicks, data_start, data_end = format_date(start_date, days)
+        while clicks != 0:
+            self.page.locator(next_month).click()
+            clicks -= 1
         self.page.locator(f"//td[@data-date='{data_start}']").click()
         self.page.locator(f"//td[@data-date='{data_end}']").click()
+
+        # filling accommodation details
         if adults == 2 and children == 0 and rooms == 1:
             self.page.locator(search_button).click()
         else:
@@ -49,5 +63,11 @@ class StaysPage:
             if rooms > 1:
                 for i in range(rooms - 1):
                     self.page.locator(increase_room_button).click()
+
+        # checkbox work-traveling
+        if work != '':
+            self.page.locator(work_checkbox).click()
+        # search
         self.page.locator(search_button).click()
+        assert self.page.url.startswith(base_url_settings + 'searchresults')
         return self
