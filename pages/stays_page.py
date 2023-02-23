@@ -9,6 +9,7 @@ search_button = "//button[@type='submit']"
 sign_close_button = "//button[@aria-label='Dismiss sign in information.']"
 work_checkbox = "//label[@for='sb_travel_purpose_checkbox']"
 next_month = "//div[@data-bui-ref='calendar-next']"
+currency_button = "//button[@data-testid='header-currency-picker-trigger']/span"
 
 # accommodation
 accommodation_button = "//div[@data-component='search/group/group-with-modal']"
@@ -21,19 +22,23 @@ increase_room_button = "//button[@aria-label='Increase number of Rooms']"
 
 result_of_searching = "//div[@data-capla-component='b-search-web-searchresults/HeaderDesktop']"
 
+# currencies
+all_currencies = "text=All currencies"
+
 
 class StaysPage:
 
     def __init__(self, page: Page):
         self.page = page
 
-    def find_stay(self, place='', adults=2, children=0, rooms=1, work='', start_date='', days=''):
-
-        # for registration modal
+    def close_sign_window(self):
         try:
             self.page.locator(sign_close_button).click()
         except TimeoutError:
             expect(self.page.locator(where_input)).to_be_visible(timeout=5000)
+        return self
+
+    def find_stay(self, place='', adults=2, children=0, rooms=1, work='', start_date='', days=''):
 
         # filling place
         self.page.locator(where_input).fill(place)
@@ -70,4 +75,11 @@ class StaysPage:
         # search
         self.page.locator(search_button).click()
         assert self.page.url.startswith(base_url_settings + 'searchresults')
+        return self
+
+    def change_currency(self, currency):
+        self.page.locator(currency_button).click()
+        expect(self.page.locator(all_currencies)).to_be_visible(timeout=5000)
+        self.page.locator(f"text={currency}").click()
+        #expect(self.page.locator(currency_button, has_text=currency)).to_be_visible(timeout=5000)
         return self
