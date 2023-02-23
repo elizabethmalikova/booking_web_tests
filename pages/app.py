@@ -1,5 +1,6 @@
 from playwright.sync_api import Playwright
 from pages.stays_page import StaysPage
+from pages.flights_page import FlightsPage
 from settings.settings import *
 
 
@@ -12,6 +13,7 @@ class App:
         self.base_url = base_url
         self.page.goto(base_url)
         self.stays_page = StaysPage(self.page)
+        self.flights_page = FlightsPage(self.page)
 
     def save_state(self):
         self.context.storage_state(path="state.json")
