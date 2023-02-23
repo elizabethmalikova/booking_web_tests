@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-headless_setting = False
+headless_setting = True
 base_url_settings = "https://www.booking.com/"
 
 
