@@ -17,6 +17,7 @@ next_month = "//button[@class='Actionable-module__root___TkUWg Button-module__ro
              "Button-module__root--size-large___3piz9 Button-module__root--wide-false___geg2Y " \
              "Button-module__root--variant-tertiary-neutral___lxeUx Calendar-module__control___DIsDK " \
              "Calendar-module__control--next___jfyUl'] "
+one_way_button = "//label[@for='search_type_option_ONEWAY']"
 
 
 class FlightsPage:
@@ -29,18 +30,7 @@ class FlightsPage:
         expect(self.page.locator(flight_page_text)).to_be_visible(timeout=10000)
         return self
 
-    def find_round_flight(self, class_flight='', where_to='', start_date='',
-                          days=''):
-        # choose class of flight
-        if not class_flight == 'ECONOMY':
-            self.page.select_option(flight_class, class_flight)
-        # choose place of arrival
-        self.page.locator(where_to_button).click()
-        expect(self.page.locator(where_to_input)).to_be_visible(timeout=5000)
-        self.page.locator(where_to_input).fill(where_to)
-        self.page.wait_for_timeout(2000)
-        self.page.keyboard.press('ArrowDown')
-        self.page.keyboard.press('Enter')
+    def find_round_flight(self, start_date, days):
         # choose dates
         self.page.locator(calendar_button).click()
         clicks, data_start, data_end = format_date(start_date, days)
@@ -49,6 +39,20 @@ class FlightsPage:
             clicks -= 1
         self.page.locator(f"//span[@data-date='{data_start}']").click()
         self.page.locator(f"//span[@data-date='{data_end}']").click()
+        # search
+        self.page.locator(submit_button).click()
+        assert self.page.url.startswith('https://flights.booking.com/flights/')
+        return self
+
+    def find_one_way_flight(self, date_of_flight):
+        self.page.locator(one_way_button).click()
+        # choose dates
+        self.page.locator(calendar_button).click()
+        clicks, data_start = format_date(date_of_flight)
+        while clicks != 0:
+            self.page.locator(next_month).click()
+            clicks -= 1
+        self.page.locator(f"//span[@data-date='{data_start}']").click()
         # search
         self.page.locator(submit_button).click()
         assert self.page.url.startswith('https://flights.booking.com/flights/')
@@ -67,4 +71,17 @@ class FlightsPage:
                     self.page.locator(increase_children_button).click()
                     self.page.select_option(f"//select[@name='{child_age_element + str(i)}']", ages[i])
             self.page.locator(travellers_done_button).click()
+        return self
+
+    def choose_where(self, class_flight='ECONOMY', where_to=''):
+        # choose class of flight
+        if not class_flight == 'ECONOMY':
+            self.page.select_option(flight_class, class_flight)
+        # choose place of arrival
+        self.page.locator(where_to_button).click()
+        expect(self.page.locator(where_to_input)).to_be_visible(timeout=5000)
+        self.page.locator(where_to_input).fill(where_to)
+        self.page.wait_for_timeout(2000)
+        self.page.keyboard.press('ArrowDown')
+        self.page.keyboard.press('Enter')
         return self
