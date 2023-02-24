@@ -10,6 +10,7 @@ def test_find_flight(app_without_auth):
     app_without_auth. \
         flights_page. \
         goto_flights(). \
-        find_round_flight(class_flight=class_flights[1], adults=2, children=1, where_to='KUF', start_date='23.06.2023',
-                          days=7)
+        change_count_of_travellers(adults=2, children=1, ages=['5']).\
+        find_round_flight(class_flight=class_flights[2], where_to='KUF', start_date='23.06.2023', days=7)
+
 

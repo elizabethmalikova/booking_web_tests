@@ -39,7 +39,7 @@ class StaysPage:
     def __init__(self, page: Page):
         self.page = page
 
-    def close_sign_window(self):
+    def close_sign_window(self): # without authorization there could be a window to dign up
         try:
             self.page.locator(sign_close_button).click()
         except TimeoutError:
@@ -82,10 +82,13 @@ class StaysPage:
         return self
 
     def change_currency(self, currency):
+        # open currency window
         self.page.locator(currency_button).click()
-        expect(self.page.locator(all_currencies)).to_be_visible(timeout=5000)
-        self.page.locator(all_currencies).locator(f"text={currency}").click()
-        expect(self.page.locator(currency_button).locator(f"text={currency}")).to_be_visible(timeout=5000)
+        expect(self.page.locator(f"//div[text()='{currency}']")).to_be_visible(timeout=5000)
+        # choose currency
+        self.page.locator(f"//div[text()='{currency}']").click()
+        # check edition
+        expect(self.page.locator(currency_button).locator(f"text={currency}")).to_be_visible(timeout=10000)
         return self
 
     def registration(self):
