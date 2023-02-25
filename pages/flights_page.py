@@ -1,23 +1,6 @@
 from playwright.sync_api import Playwright, Page, expect, TimeoutError
 from settings.settings import base_url_settings, format_date
-
-flight_page_text = "text=Compare and book flights with ease"
-flight_class = "//select[@title='Cabin class']"
-travellers_button = "text=1 adult"
-increase_adults_button = "//button[@data-ui-sr='occupancy_adults_input_plus']"
-increase_children_button = "//button[@data-ui-sr='occupancy_children_input_plus']"
-child_age_element = "sr_occupancy_children_age_"
-travellers_done_button = "//span[text()='Done']"
-where_to_button = "//button[@data-ui-sr='location_input_to_0']"
-where_to_input = "//input[@placeholder='Airport or city']"
-calendar_button = "//button[@data-ui-sr='segment_date_input_0']"
-submit_button = "text=Search"
-next_month = "//button[@class='Actionable-module__root___TkUWg Button-module__root___2-9mg " \
-             "Button-module__root--variant-tertiary___4w3xP Button-module__root--icon-only___Up8uO " \
-             "Button-module__root--size-large___3piz9 Button-module__root--wide-false___geg2Y " \
-             "Button-module__root--variant-tertiary-neutral___lxeUx Calendar-module__control___DIsDK " \
-             "Calendar-module__control--next___jfyUl'] "
-one_way_button = "//label[@for='search_type_option_ONEWAY']"
+from pages.locators import *
 
 
 class FlightsPage:
@@ -32,7 +15,7 @@ class FlightsPage:
 
     def find_round_flight(self, start_date, days):
         # choose dates
-        self.page.locator(calendar_button).click()
+        self.page.locator(flight_calendar_button).click()
         clicks, data_start, data_end = format_date(start_date, days)
         while clicks != 0:
             self.page.locator(next_month).click()
@@ -40,21 +23,21 @@ class FlightsPage:
         self.page.locator(f"//span[@data-date='{data_start}']").click()
         self.page.locator(f"//span[@data-date='{data_end}']").click()
         # search
-        self.page.locator(submit_button).click()
+        self.page.locator(search_button).click()
         assert self.page.url.startswith('https://flights.booking.com/flights/')
         return self
 
     def find_one_way_flight(self, date_of_flight):
         self.page.locator(one_way_button).click()
         # choose dates
-        self.page.locator(calendar_button).click()
+        self.page.locator(flight_calendar_button).click()
         clicks, data_start = format_date(date_of_flight)
         while clicks != 0:
             self.page.locator(next_month).click()
             clicks -= 1
         self.page.locator(f"//span[@data-date='{data_start}']").click()
         # search
-        self.page.locator(submit_button).click()
+        self.page.locator(search_button).click()
         assert self.page.url.startswith('https://flights.booking.com/flights/')
         return self
 
