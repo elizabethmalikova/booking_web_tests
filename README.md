@@ -1,3 +1,6 @@
+Hello, my name is Liza and I am an AQA Junior. 
+This project is my first independent endeavor, through which I aim to enhance my skills and demonstrate my expertise.
+
 Python:
 - sudo apt install python3
 
